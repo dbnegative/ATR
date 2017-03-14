@@ -20,7 +20,7 @@ resource "aws_route" "public_internet_default_gateway" {
   count = "${length(var.aws_azs)}"
 
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = "${element(aws_nat_gateway.public_gw.*.id, count.index)}"
+  gateway_id             = "${aws_internet_gateway.gateway.id}"
   route_table_id         = "${element(aws_route_table.public_routing_table.*.id, count.index)}"
 }
 

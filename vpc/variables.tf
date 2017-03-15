@@ -2,7 +2,7 @@ variable "aws_region" {
   description = "AWS EC2 Region for VPC"
 }
 
-variable "aws_vpc_name" {
+variable "vpc_name" {
   description = "AWS VPC Name"
 }
 
@@ -15,7 +15,7 @@ variable "vpc_options" {
 
   default = {
     enable_dns_hostnames = "true"
-    enable_dns_support   = "false"
+    enable_dns_support   = "true"
   }
 }
 
@@ -27,4 +27,14 @@ variable "aws_azs" {
     "b",
     "c",
   ]
+}
+
+variable "hosted_zone_name" {
+  type        = "string"
+  description = "Name of hosted zone"
+}
+
+variable "ssh_pubkey" {
+  type        = "string"
+  description = "Path to the SSH public key"
 }

@@ -2,7 +2,7 @@ resource "aws_nat_gateway" "private_gw" {
   count = "${length(var.aws_azs)}"
 
   allocation_id = "${element(aws_eip.gateways.*.id, count.index)}"
-  subnet_id     = "${element(aws_subnet.private.*.id, count.index)}"
+  subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
 
   depends_on = ["aws_internet_gateway.gateway"]
 }

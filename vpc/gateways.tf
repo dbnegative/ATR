@@ -9,7 +9,7 @@ resource "aws_internet_gateway" "gateway" {
   vpc_id = "${aws_vpc.vpc.id}"
 
   tags {
-    Name = "${var.aws_vpc_name} IGW"
+    Name = "${var.vpc_name} IGW"
   }
 }
 

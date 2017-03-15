@@ -16,6 +16,7 @@ variable "vpc_id" {
 
 variable "private_subnets" {
   description = "List of private subnets"
+  type        = "list"
 }
 
 variable "image_id" {

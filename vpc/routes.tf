@@ -31,7 +31,7 @@ resource "aws_route_table" "private_routing_table" {
 
   tags {
     AvailabilityZone = "${element(var.aws_azs, count.index)}"
-    Name             = "${var.vpc_name} public ${element(var.aws_azs, count.index)}"
+    Name             = "${var.vpc_name} private ${element(var.aws_azs, count.index)}"
   }
 }
 

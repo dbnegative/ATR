@@ -23,8 +23,9 @@ variable "aws_azs" {
   type = "list"
 
   default = [
-    "a",
+    #"a",
     "b",
+
     "c",
   ]
 }

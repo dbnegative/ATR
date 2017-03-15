@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
 
   vpc_id            = "${aws_vpc.vpc.id}"
   availability_zone = "${var.aws_region}${element(var.aws_azs, count.index)}"
-  cidr_block        = "${cidrsubnet(var.vpc_cidr, 7, count.index+1)}"
+  cidr_block        = "${cidrsubnet(var.vpc_cidr, 7, count.index)}"
 
   tags {
     Name = "private-${var.aws_region}"

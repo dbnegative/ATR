@@ -20,14 +20,8 @@ variable "vpc_options" {
 }
 
 variable "aws_azs" {
-  type = "list"
-
-  default = [
-    #"a",
-    "b",
-
-    "c",
-  ]
+  description = "List of AWS Availabilty Zones"
+  type        = "list"
 }
 
 variable "hosted_zone_name" {

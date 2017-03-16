@@ -3,6 +3,7 @@ module "vpc" {
   aws_region       = "us-west-1"
   vpc_name         = "production"
   vpc_cidr         = "10.0.0.0/16"
+  aws_azs          = ["c", "b"]
   hosted_zone_name = "example.com"
   ssh_pubkey       = "./ssh/aws_ssh.pub"
 }

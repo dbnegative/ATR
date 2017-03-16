@@ -6,7 +6,7 @@ resource "aws_subnet" "public" {
   cidr_block        = "${cidrsubnet(var.vpc_cidr, 7, count.index+4)}"
 
   tags {
-    Name = "public-${var.aws_region}"
+    Name = "${var.vpc_name}-public-${var.aws_region}"
     AZ   = "${var.aws_region}${element(var.aws_azs, count.index)}"
   }
 }
@@ -19,7 +19,7 @@ resource "aws_subnet" "private" {
   cidr_block        = "${cidrsubnet(var.vpc_cidr, 7, count.index)}"
 
   tags {
-    Name = "private-${var.aws_region}"
+    Name = "${var.vpc_name}-private-${var.aws_region}"
     AZ   = "${var.aws_region}${element(var.aws_azs, count.index)}"
   }
 }

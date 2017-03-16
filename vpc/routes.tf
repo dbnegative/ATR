@@ -4,8 +4,8 @@ resource "aws_route_table" "public_routing_table" {
   vpc_id = "${aws_vpc.vpc.id}"
 
   tags {
-    AvailabilityZone = "${element(var.aws_azs, count.index)}"
-    Name             = "${var.vpc_name} public ${element(var.aws_azs, count.index)}"
+    AvailabilityZone = "${var.aws_region}${element(var.aws_azs, count.index)}"
+    Name             = "${var.vpc_name} public ${var.aws_region}${element(var.aws_azs, count.index)}"
   }
 }
 
@@ -30,8 +30,8 @@ resource "aws_route_table" "private_routing_table" {
   vpc_id = "${aws_vpc.vpc.id}"
 
   tags {
-    AvailabilityZone = "${element(var.aws_azs, count.index)}"
-    Name             = "${var.vpc_name} private ${element(var.aws_azs, count.index)}"
+    AvailabilityZone = "${var.aws_region}${element(var.aws_azs, count.index)}"
+    Name             = "${var.vpc_name} private ${var.aws_region}${element(var.aws_azs, count.index)}"
   }
 }
 

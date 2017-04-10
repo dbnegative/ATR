@@ -230,6 +230,8 @@ resource "aws_launch_configuration" "rancher_mgmt_launch_config" {
   security_groups = ["${aws_security_group.rancher_mgmt_sec_group.id}"]
 
   user_data = "${data.template_file.mgmt_userdata.rendered}"
+
+  depends_on = ["aws_db_instance.rancher_rds"]
 }
 
 # Create SG for management nodes allowing ingress od ssh, cluster registratation, and web interface

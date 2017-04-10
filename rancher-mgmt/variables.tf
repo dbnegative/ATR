@@ -37,6 +37,18 @@ variable "vpc_cidr" {
   description = "VPC CIDR"
 }
 
+variable "hosted_zone_id" {
+  description = "Hosted Zone ID of Main Domain"
+}
+
+variable "domain" {
+  description = "Rancher Domain"
+}
+
+variable "domain_email_address" {
+  description = "Lets Encrypt registered domain email address"
+}
+
 variable "dbname" {
   description = "Rancher MYSQL RDS DB name"
 }

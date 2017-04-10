@@ -1,13 +1,76 @@
+# Create rancher aliased A record to rancher mgmt elb
+resource "aws_route53_record" "rancher_mgmt_elb_dns" {
+  zone_id = "${var.hosted_zone_id}"
+  name    = "ranchermgmt.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.rancher_mgmt_elb.dns_name}"
+    zone_id                = "${aws_elb.rancher_mgmt_elb.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
+# Create rancher aliased A record to rancher mgmt elb
+resource "aws_route53_record" "rancher_mgmt_elb_dns_alt" {
+  zone_id = "${var.hosted_zone_id}"
+  name    = "ranchermgmt2.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.rancher_mgmt_elb.dns_name}"
+    zone_id                = "${aws_elb.rancher_mgmt_elb.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
+# Create the private key for the registration (not the certificate)
+resource "tls_private_key" "private_key" {
+  algorithm = "RSA"
+}
+
+# Set up a registration using a private key from tls_private_key
+resource "acme_registration" "reg" {
+  server_url      = "https://acme-staging.api.letsencrypt.org/directory"
+  account_key_pem = "${tls_private_key.private_key.private_key_pem}"
+  email_address   = "$var.domain_email_address"
+}
+
+# Create a certificate
+resource "acme_certificate" "certificate" {
+  server_url                = "https://acme-staging.api.letsencrypt.org/directory"
+  account_key_pem           = "${tls_private_key.private_key.private_key_pem}"
+  common_name               = "ranchermgmt.${var.domain}"
+  subject_alternative_names = ["ranchermgmt2.${var.domain}"]
+
+  dns_challenge {
+    provider = "route53"
+  }
+
+  registration_url = "${acme_registration.reg.id}"
+}
+
+resource "aws_iam_server_certificate" "rancher_mgmt_cert" {
+  name_prefix      = "rancher-mgmt-cert"
+  certificate_body = "${acme_certificate.certificate.certificate_pem}"
+  private_key      = "${acme_certificate.certificate.private_key_pem}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_elb" "rancher_mgmt_elb" {
   name            = "rancher-mangement-elb"
   subnets         = ["${var.public_subnets}"]
   security_groups = ["${aws_security_group.rancher_mgamt_elb_sec_group.id}"]
 
   listener {
-    instance_port     = 8080
-    instance_protocol = "tcp"
-    lb_port           = 80
-    lb_protocol       = "tcp"
+    instance_port      = 8080
+    instance_protocol  = "tcp"
+    lb_port            = 443
+    lb_protocol        = "ssl"
+    ssl_certificate_id = "${aws_iam_server_certificate.rancher_mgmt_cert.arn}"
   }
 
   health_check {
@@ -43,6 +106,20 @@ resource "aws_security_group" "rancher_mgamt_elb_sec_group" {
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "TCP"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
     protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"]
   }

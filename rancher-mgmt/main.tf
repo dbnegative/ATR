@@ -33,7 +33,7 @@ resource "tls_private_key" "private_key" {
 resource "acme_registration" "reg" {
   server_url      = "https://acme-staging.api.letsencrypt.org/directory"
   account_key_pem = "${tls_private_key.private_key.private_key_pem}"
-  email_address   = "$var.domain_email_address"
+  email_address   = "${var.domain_email_address}"
 }
 
 # Create a certificate
@@ -351,15 +351,17 @@ resource "aws_security_group_rule" "allow_mysql" {
 
 # Create rancher mysql backend to store all rancher config
 resource "aws_db_instance" "rancher_rds" {
-  allocated_storage      = 10
-  storage_type           = "gp2"
-  engine                 = "mysql"
-  identifier             = "rancherdb"
-  engine_version         = "5.6.27"
-  instance_class         = "db.t1.micro"
-  name                   = "${var.dbname}"
-  username               = "${var.root_dbusername}"
-  password               = "${var.root_dbpassword}"
-  db_subnet_group_name   = "${aws_db_subnet_group.rancher_rds_subnet_group.name}"
-  vpc_security_group_ids = ["${aws_security_group.rancher_rds_allow_mysql.id}"]
+  allocated_storage         = 10
+  storage_type              = "gp2"
+  engine                    = "mysql"
+  identifier                = "rancherdb"
+  engine_version            = "5.6.27"
+  instance_class            = "db.t1.micro"
+  name                      = "${var.dbname}"
+  username                  = "${var.root_dbusername}"
+  password                  = "${var.root_dbpassword}"
+  multi_az                  = "true"
+  final_snapshot_identifier = "rancherdb-final-snapshot"
+  db_subnet_group_name      = "${aws_db_subnet_group.rancher_rds_subnet_group.name}"
+  vpc_security_group_ids    = ["${aws_security_group.rancher_rds_allow_mysql.id}"]
 }

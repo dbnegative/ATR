@@ -93,6 +93,38 @@ resource "aws_elb" "rancher_mgmt_elb" {
   }
 }
 
+# Create Load balancer policy to enable proxy support
+resource "aws_load_balancer_policy" "rancher_proxy_policy" {
+  load_balancer_name = "${aws_elb.rancher_mgmt_elb.name}"
+  policy_name        = "rancher-proxy-policy"
+  policy_type_name   = "ProxyProtocolPolicyType"
+
+  policy_attribute = {
+    name  = "ProxyProtocol"
+    value = "true"
+  }
+}
+
+# Apply proxy policy to load balancer
+resource "aws_load_balancer_backend_server_policy" "rancher_mgmt_elb_backend_auth_policies_443" {
+  load_balancer_name = "${aws_elb.rancher_mgmt_elb.name}"
+  instance_port      = 443
+
+  policy_names = [
+    "${aws_load_balancer_policy.rancher_proxy_policy.policy_name}",
+  ]
+}
+
+# Apply proxy policy to load balancer
+resource "aws_load_balancer_backend_server_policy" "rancher_mgmt_elb_backend_auth_policies_8080" {
+  load_balancer_name = "${aws_elb.rancher_mgmt_elb.name}"
+  instance_port      = 8080
+
+  policy_names = [
+    "${aws_load_balancer_policy.rancher_proxy_policy.policy_name}",
+  ]
+}
+
 # Create security group to allow access to elb SSL port
 resource "aws_security_group" "rancher_mgamt_elb_sec_group" {
   name        = "rancher managment elb SG"

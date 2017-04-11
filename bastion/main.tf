@@ -114,8 +114,24 @@ resource "aws_iam_role" "bastion_iam_role" {
 EOF
 }
 
+# Create rancher aliased A record to rancher mgmt elb
+resource "aws_route53_record" "bastion_elb_dns" {
+  zone_id = "${var.hosted_zone_id}"
+  name    = "bastion.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.bastion_elb.dns_name}"
+    zone_id                = "${aws_elb.bastion_elb.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_elb" "bastion_elb" {
-  name = "bastion"
+  name    = "bastion"
+  subnets = ["${var.public_subnets}"]
+
+  security_groups = ["${aws_security_group.bastion_elb_sec_group.id}"]
 
   listener {
     instance_port     = 22
@@ -136,10 +152,6 @@ resource "aws_elb" "bastion_elb" {
   idle_timeout                = 300
   connection_draining         = true
   connection_draining_timeout = 5
-
-  subnets = ["${var.public_subnets}"]
-
-  security_groups = ["${aws_security_group.bastion_elb_sec_group.id}"]
 
   tags {
     Name            = "bastion"

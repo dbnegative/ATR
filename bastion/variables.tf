@@ -26,3 +26,11 @@ variable "name" {
   type        = "string"
   description = "Name of the Environment"
 }
+
+variable "hosted_zone_id" {
+  description = "Hosted Zone ID of Main Domain"
+}
+
+variable "domain" {
+  description = "Rancher Domain"
+}

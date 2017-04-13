@@ -1,14 +1,14 @@
 # AWS Rancher Terraform Bootstrap
 Creates a multi AZ HA rancher enviroment in AWS using Terraform. Split into modules for ease of use. 
 
-#Requirements:
+# Requirements:
  - Terraform v0.9 >
  - ACME plugin for Terraform, to generate Lets Encrypt certs: https://github.com/paybyphone/terraform-provider-acme 
  
-#Usage:
+# Usage:
  - Update main.tf with your prefered settings
 
-#Currently builds:
+# Currently builds:
  - VPC
  - Internet gateway
  - 1 x public subnet per AZ 
@@ -23,7 +23,7 @@ Creates a multi AZ HA rancher enviroment in AWS using Terraform. Split into modu
  - ELB with let's encrypt SSL cert
  - Route 53 records for bastion and Rancher web interface
 
-#Complete:
+# Complete:
  - Rancher Web Interface Nodes
  - Mysql RDS HA Backend
  - Bastion host
@@ -32,7 +32,7 @@ Creates a multi AZ HA rancher enviroment in AWS using Terraform. Split into modu
  - SSL certs for web nodes ELB's
  - ELB proxy policy for web managment nodes
 
-#Things to add (Work in Progress):
+# Things to add (Work in Progress):
  - Rancher default username and access control
  - Worker nodes
  - Worker nodes ASG

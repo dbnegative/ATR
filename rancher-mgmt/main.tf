@@ -65,7 +65,7 @@ resource "aws_iam_server_certificate" "rancher_mgmt_cert" {
 resource "aws_elb" "rancher_mgmt_elb" {
   name            = "rancher-mangement-elb"
   subnets         = ["${var.public_subnets}"]
-  security_groups = ["${aws_security_group.rancher_mgamt_elb_sec_group.id}"]
+  security_groups = ["${aws_security_group.rancher_mgmt_elb_sec_group.id}"]
 
   listener {
     instance_port      = 8080
@@ -78,9 +78,9 @@ resource "aws_elb" "rancher_mgmt_elb" {
   health_check {
     healthy_threshold   = 10
     unhealthy_threshold = 10
-    timeout             = 3
+    timeout             = 60
     target              = "tcp:8080"
-    interval            = 30
+    interval            = 120
   }
 
   cross_zone_load_balancing   = true
@@ -126,9 +126,9 @@ resource "aws_load_balancer_backend_server_policy" "rancher_mgmt_elb_backend_aut
 }
 
 # Create security group to allow access to elb SSL port
-resource "aws_security_group" "rancher_mgamt_elb_sec_group" {
-  name        = "rancher managment elb SG"
-  description = "rancher managment elb security group"
+resource "aws_security_group" "rancher_mgmt_elb_sec_group" {
+  name        = "rancher management elb SG"
+  description = "rancher management elb security group"
   vpc_id      = "${var.vpc_id}"
 
   ingress {
@@ -363,7 +363,7 @@ resource "aws_db_instance" "rancher_rds" {
   username                  = "${var.root_dbusername}"
   password                  = "${var.root_dbpassword}"
   multi_az                  = "true"
-  final_snapshot_identifier = "rancherdb-final-snapshot"
+  final_snapshot_identifier = "rancherdb-snapshot-${uuid()}"
   db_subnet_group_name      = "${aws_db_subnet_group.rancher_rds_subnet_group.name}"
   vpc_security_group_ids    = ["${aws_security_group.rancher_rds_allow_mysql.id}"]
 }
